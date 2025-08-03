@@ -108,7 +108,6 @@ ASMSRC := $(UASMSRC)
 ASMXSRC := $(UASMXSRC)
 
 CSRC := $(UCSRC)
-CSRC += $(realpath $(COMMON_SRC_PATH)/_unit_base.c)
 
 CXXSRC := $(UCXXSRC)
 

@@ -225,7 +225,7 @@ __unit_callback void unit_render(const float * in, float * out, uint32_t frames)
     {% endif %}
 
 #ifdef RENDER_HALF
-    hv_processInline(hvContext, (float *) in, buffer, frames >> 1);
+    hv_processInlineInterleaved(hvContext, (float *) in, buffer, frames >> 1);
     for(int i = 0; y!= y_e; i++) {
         if (i & 1) {
             last_buf = *p++;
@@ -235,7 +235,7 @@ __unit_callback void unit_render(const float * in, float * out, uint32_t frames)
         }
     }
 #else
-    hv_processInline(hvContext, (float *) in, buffer, frames);
+    hv_processInlineInterleaved(hvContext, (float *) in, buffer, frames);
     for(; y!= y_e; ) {
         *(y++) = *p++;
     }

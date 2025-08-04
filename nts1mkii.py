@@ -47,10 +47,10 @@ class LogueSDK_v1(Generator):
 
         try:
             # check num of channels
-            if num_input_channels != 0:
+            if num_input_channels > 2:
                 print(f"Warning: {num_input_channels} input channels(ignored)")
             if num_output_channels != 1:
-                raise Exception("Logue SDK supports only monoral output.")
+                raise Exception("Osc units support only monoral output.")
 
             # ensure that the output directory does not exist
             out_dir = os.path.abspath(out_dir)
@@ -73,6 +73,7 @@ class LogueSDK_v1(Generator):
                 'msg_pool_size_kb': 1,     # minimum
                 'input_queue_size_kb': 1,  # minimum
                 'output_queue_size_kb': 0, # minimum
+                'num_output_channels' : num_output_channels
             }
 
             # list of source files

@@ -5,7 +5,8 @@ extern size_t heap_offset;
 
 int main(int argc, char* argv[]) {
     HeavyContextInterface* hvContext;
-    float buffer[64];
+    float in_buffer[64 * 2];
+    float out_buffer[64 * 2];
 
     hvContext = hv_{{patch_name}}_new_with_options(48000, {{msg_pool_size_kb}}, {{input_queue_size_kb}}, {{output_queue_size_kb}});
     {% if noteon_trig is defined %}
@@ -43,7 +44,7 @@ int main(int argc, char* argv[]) {
         hv_sendFloatToReceiver(hvContext, HV_{{patch_name|upper}}_PARAM_IN_{{param[id]['name']|upper}}, {{param[id]['default']}});
         {% endif %}
         {% endfor %}
-        hv_processInline(hvContext, NULL, buffer, 64);
+        hv_processInline(hvContext, in_buffer, out_buffer, 64);
     }
     printf("total: %ld\n", heap_offset);
 }

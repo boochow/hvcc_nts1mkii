@@ -267,7 +267,7 @@ __unit_callback void unit_set_param_value(uint8_t id, int32_t value)
     float f;
 
     if (stop_osc_param) {
-        return; // avoid all parameters to be zero'ed after OSC_INIT
+        return; // avoid all parameters to be zero'ed after unit_init()
     }
     params[id] = value;
     switch(id){

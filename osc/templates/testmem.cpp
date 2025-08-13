@@ -38,7 +38,7 @@ int main(int argc, char* argv[]) {
         hv_sendFloatToReceiver(hvContext, HV_{{patch_name|upper}}_PARAM_IN_ALT_F, {{alt['default']}});
         {% endif %}
         {% endif %}
-        {% for i in range(1, 7) %}
+        {% for i in range(1, 9) %}
         {% set id = "param_id" ~ i %}
         {% if param[id] is defined %}
         hv_sendFloatToReceiver(hvContext, HV_{{patch_name|upper}}_PARAM_IN_{{param[id]['name']|upper}}, {{param[id]['default']}});

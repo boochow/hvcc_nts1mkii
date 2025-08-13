@@ -128,14 +128,14 @@ class LogueSDK_v1(Generator):
                     other_params.append(param)
             
             # oscillator parameters
-            osc_params = [None] * 6
+            osc_params = [None] * 8
 
             # process parameter names
             for param in numbered_params:
                 p_name, p_rcv = param
                 match = re.match(r"^_(\d+)_(.+)$", p_name)
                 param_num = int(match.group(1)) - 1
-                if not (0 <= param_num <= 5):
+                if not (0 <= param_num <= 7):
                     raise IndexError(f"Index {param_num} is out of range.")
                 p_display = match.group(2)
                 if osc_params[param_num] is not None:
@@ -154,7 +154,7 @@ class LogueSDK_v1(Generator):
 
             # store parameter attributes into a dcitionary (context)
             context['param'] = {}
-            for i in range(6):
+            for i in range(8):
                 if osc_params[i] is None:
                     continue
                 # prefix (parameter number)
@@ -204,7 +204,7 @@ class LogueSDK_v1(Generator):
                 context['param'][p_key]['display'] = p_display
 
             # find the total number of parameters
-            for i in range(5, -1, -1):
+            for i in range(7, -1, -1):
                 if osc_params[i] is not None:
                     num_param = i + 1
                     break

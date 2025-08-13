@@ -83,7 +83,7 @@ LDOPT := -shared --entry=0 -specs=nano.specs -specs=nosys.specs
 CWARN := -W -Wall -Wextra
 CXXWARN :=
 
-FPU_OPTS := -mfloat-abi=hard -mfpu=fpv4-sp-d16 -fsingle-precision-constant -fcheck-new
+FPU_OPTS := -mfloat-abi=hard -mfpu=fpv5-d16 -fsingle-precision-constant -fcheck-new
 
 OPT := -g -Os -mlittle-endian 
 OPT += $(FPU_OPTS)

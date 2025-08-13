@@ -19,7 +19,9 @@ def set_min_value(dic, key, value):
     return dic[key] == value
 
 def render_from_template(template_file, rendered_file, context):
-    templates_dir = os.path.join(os.path.dirname(__file__), "templates")
+    common_templates_dir = os.path.join(os.path.dirname(__file__), "common", "templates")
+    osc_templates_dir = os.path.join(os.path.dirname(__file__), "osc", "templates")
+    templates_dir = [common_templates_dir, osc_templates_dir]
     loader = jinja2.FileSystemLoader(templates_dir)
     env = jinja2.Environment(loader=loader, trim_blocks=True, lstrip_blocks=True)
     rendered = env.get_template(template_file).render(**context)
@@ -58,7 +60,14 @@ class LogueSDK_v1(Generator):
                 shutil.rmtree(out_dir)
 
             # copy over static files
-            shutil.copytree(os.path.join(os.path.dirname(__file__), "static"), out_dir)
+            common_static_dir = os.path.join(os.path.dirname(__file__), "common", "static")
+            osc_static_dir = os.path.join(os.path.dirname(__file__), "osc", "static")
+            os.makedirs(out_dir, exist_ok=False)
+            for static_dir in [common_static_dir, osc_static_dir]:
+                for filename in os.listdir(static_dir):
+                    src_path = os.path.join(static_dir, filename)
+                    dst_path = os.path.join(out_dir, filename)
+                    shutil.copy2(src_path, dst_path)
 
             # copy C files
             for file in os.listdir(c_src_dir):

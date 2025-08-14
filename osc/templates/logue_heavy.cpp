@@ -97,7 +97,7 @@ __unit_callback int8_t unit_init(const unit_runtime_desc_t * desc)
     alt = {{alt['default']}};
     alt_dirty = true;
     {% endif %}
-    {% for i in range(1, 7) %}
+    {% for i in range(1, 9) %}
       {% set id = "param_id" ~ i %}
       {% if param[id] is defined %}
     {{param[id]['name']}} = {{param[id]['default']}};

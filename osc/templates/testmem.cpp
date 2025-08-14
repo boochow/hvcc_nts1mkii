@@ -2,6 +2,7 @@
 #include "Heavy_{{patch_name}}.h"
 
 extern size_t heap_offset;
+extern size_t sdram_offset;
 
 int main(int argc, char* argv[]) {
     HeavyContextInterface* hvContext;
@@ -46,5 +47,5 @@ int main(int argc, char* argv[]) {
         {% endfor %}
         hv_processInline(hvContext, in_buffer, out_buffer, 64);
     }
-    printf("total: %ld\n", heap_offset);
+    printf("total: %ld\n", heap_offset + sdram_offset);
 }

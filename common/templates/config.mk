@@ -18,6 +18,8 @@ $(HEAP_SIZE_FILE):
 		./testmem > $$TMPFILE ; \
 		HEAP_SIZE_TESTMEM=$$(grep '^total:' $$TMPFILE | awk '{print $$2}') ; \
 		echo "HEAP_SIZE := $$HEAP_SIZE_TESTMEM" > $(HEAP_SIZE_FILE) ; \
+		SDRAM_SIZE_TESTMEM=$$(grep '^sdram:' $$TMPFILE | awk '{print $$2}') ; \
+		echo "SDRAM_SIZE := $$SDRAM_SIZE_TESTMEM" >> $(HEAP_SIZE_FILE) ; \
 		rm -f $$TMPFILE ; \
 		$(MAKE) -f Makefile.testmem clean ; \
 	else \
@@ -69,6 +71,10 @@ ULIBS  += -Wl,--gc-sections
 #
 
 UDEFS = -DNDEBUG -DUNIT_HEAP_SIZE=$(HEAP_SIZE) -fvisibility=hidden
+
+ifdef SDRAM_SIZE
+UDEFS += -DUNIT_SDRAM_SIZE=$(SDRAM_SIZE)
+endif
 
 # Assume Unix-like to suppress warning messages
 UDEFS += -U_WIN32 -U_WIN64 -U_MSC_VER -D__unix

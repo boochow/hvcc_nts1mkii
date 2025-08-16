@@ -159,6 +159,17 @@ OUTFILES := $(BUILDDIR)/$(PROJECT).elf \
 	    $(BUILDDIR)/$(PROJECT).list
 
 ##############################################################################
+# Function
+#
+
+define MAX_LOAD_END_FUNC
+$(shell LC_ALL=C readelf -W -l $(1) | \
+  awk '$$1=="LOAD"{v=substr($$3,3); m=substr($$6,3); s=hextoi(v)+hextoi(m); if(s>max)max=s} \
+       END{print (max==""?0:max)} \
+       function hextoi(h,  i,c,d,n,x){n=length(h);x=0;for(i=1;i<=n;i++){c=tolower(substr(h,i,1));if(c>="0"&&c<="9")d=c+0;else d=10+index("abcdef",c)-1;x=x*16+d}return x}')
+endef
+
+##############################################################################
 # Targets
 #
 
@@ -222,6 +233,8 @@ $(BUILDDIR)/%.elf: $(OBJS) $(LDSCRIPT)
 	@$(OD) $(ODFLAGS) $< > $@
 	@echo
 	@$(SZ) $<
+	@echo
+	@printf ' Memory footprint: %d bytes\n' $(call MAX_LOAD_END_FUNC,$<)
 	@echo
 
 %.list: %.elf

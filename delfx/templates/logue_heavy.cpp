@@ -125,9 +125,11 @@ __unit_callback int8_t unit_init(const unit_runtime_desc_t * desc)
     if (desc->input_channels != 2 || desc->output_channels != 2) 
       return k_unit_err_geometry;
 
+#if defined(UNIT_SDRAM_SIZE) && (UNIT_SDRAM_SIZE) > 0
     if (!desc->hooks.sdram_alloc)
       return k_unit_err_memory;
     init_sdram(desc->hooks.sdram_alloc);
+#endif
 
     s_desc = *desc;
 #ifdef RENDER_HALF

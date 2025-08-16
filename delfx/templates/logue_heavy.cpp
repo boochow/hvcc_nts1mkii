@@ -94,6 +94,10 @@ __unit_callback int8_t unit_init(const unit_runtime_desc_t * desc)
     depth = {{depth['default']}};
     depth_dirty = true;
     {% endif %}
+    {% if mix is defined %}
+    mix = {{mix['default']}};
+    mix_dirty = true;
+    {% endif %}
     {% for i in range(1, 8) %}
       {% set id = "param_id" ~ i %}
       {% if param[id] is defined %}

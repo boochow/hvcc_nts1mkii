@@ -25,7 +25,7 @@ const __unit_header unit_header_t unit_header = {
         {% for i in range(1, 8) %}
         {% set id = "param_id" ~ i %}
         {% if param[id] is defined %}
-        {{'{' ~ param[id]['min']}}, {{param[id]['max']}}, {{param[id]['default']}}, {{param[id]['default']}}, k_unit_param_type_none, 0, 0, 0, {{ '{"' ~ param[id]['display'] ~ '"}}' }}{% if not loop.last %},{{"\n"}}{% endif %}
+        {{'{' ~ param[id]['min'] | int}}, {{param[id]['max'] | int}}, {{param[id]['default'] | int}}, {{param[id]['default'] | int}}, k_unit_param_type_none, 0, 0, 0, {{ '{"' ~ param[id]['display'] ~ '"}}' }}{% if not loop.last %},{{"\n"}}{% endif %}
         {% else %}{% raw %}
         {0, 0, 0, 0, k_unit_param_type_none, 0, 0, 0, {""}}{% endraw %}{% if not loop.last %},{% endif %}
         {% endif %}

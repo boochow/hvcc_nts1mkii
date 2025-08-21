@@ -48,6 +48,6 @@
 #define fast_inline inline __attribute__((always_inline, optimize("Ofast")))
 
 #define __unit_callback __attribute__((used, visibility("default")))
-#define __unit_header __attribute__((used, section(".unit_header") ,visibility("default")))
+#define __unit_header __attribute__((section(".unit_header") ,visibility("default")))
 
 #endif // ATTRIBUTES_H_

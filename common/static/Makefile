@@ -234,7 +234,11 @@ $(BUILDDIR)/%.elf: $(OBJS) $(LDSCRIPT)
 	@echo
 	@$(SZ) $<
 	@echo
-	@printf ' Memory footprint: %d bytes\n' $(call MAX_LOAD_END_FUNC,$<)
+	@load_end=$(call MAX_LOAD_END_FUNC,$<); \
+	printf ' Memory footprint: %d bytes\n' "$$load_end"; \
+	if [ "$$load_end" -ge $(MAX_UNIT_SIZE) ]; then \
+		printf ' WARNING: Memory footprint exceeds %d\n' $(MAX_UNIT_SIZE); \
+	fi
 	@echo
 
 %.list: %.elf

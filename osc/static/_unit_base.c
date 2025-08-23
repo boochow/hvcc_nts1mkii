@@ -97,3 +97,21 @@ __attribute__((weak)) void unit_set_param_value(uint8_t id, int32_t value) {
 __attribute__((weak)) void unit_set_tempo(uint32_t tempo) { (void)tempo; }
 
 __attribute__((weak)) void unit_tempo_4ppqn_tick(uint32_t counter) { (void)counter; }
+
+__attribute__((weak)) void unit_note_on(uint8_t note, uint8_t mod) {
+  (void)note;
+  (void)mod;
+}
+
+__attribute__((weak)) void unit_note_off(uint8_t note) { (void)note; }
+
+__attribute__((weak)) void unit_all_note_off(void) {}
+
+__attribute__((weak)) void unit_pitch_bend(uint16_t bend) { (void)bend; }
+
+__attribute__((weak)) void unit_channel_pressure(uint8_t mod) { (void)mod; }
+
+__attribute__((weak)) void unit_aftertouch(uint8_t note, uint8_t mod) {
+  (void)note;
+  (void)mod;
+}

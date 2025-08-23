@@ -5,7 +5,9 @@
 .DEFAULT_GOAL := all
 
 PROJECT := {{patch_name}}
-PROJECT_TYPE := delfx
+PROJECT_TYPE := {{unit_type}}
+MAX_UNIT_SIZE := {{max_unit_size}}
+SDRAM_ALLOC_THRESHOLD := {{sdram_alloc_threshold}}
 
 ifndef HEAP_SIZE
 # Estimate the necessary heap size and store it into HEAP_SIZE_FILE
@@ -27,6 +29,19 @@ $(HEAP_SIZE_FILE):
 	fi
 
 include $(HEAP_SIZE_FILE)
+ifneq ($(MAKE_RESTARTS),)
+ifeq ($(strip $(HEAP_SIZE)),)
+$(error Failed detecting heap size requirement)
+endif
+endif
+endif
+
+
+ifeq ($(strip $(SDRAM_SIZE)),)
+SDRAM_SIZE = 0
+endif
+ifeq ($(shell [ $(SDRAM_SIZE) -gt {{max_sdram_size}} ] && echo yes || echo no),yes)
+$(error Required SDRAM size($(SDRAM_SIZE)bytes) exceeds {{max_sdram_size}}bytes)
 endif
 
 ##############################################################################
@@ -73,7 +88,7 @@ ULIBS  += -Wl,--gc-sections
 UDEFS = -DNDEBUG -DUNIT_HEAP_SIZE=$(HEAP_SIZE) -fvisibility=hidden
 
 ifdef SDRAM_SIZE
-UDEFS += -DUNIT_SDRAM_SIZE=$(SDRAM_SIZE)
+UDEFS += -DUNIT_SDRAM_SIZE=$(SDRAM_SIZE) -DSDRAM_ALLOC_THRESHOLD=$(SDRAM_ALLOC_THRESHOLD)
 endif
 
 # Assume Unix-like to suppress warning messages

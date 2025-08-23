@@ -8,4 +8,4 @@ class Nts1mkii_del(LogueSDKV2Generator):
     MSG_POOL_ON_SRAM = True
 
     def unit_type():
-        return "delfx"
+        return "revfx"

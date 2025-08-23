@@ -419,7 +419,7 @@ __unit_callback void unit_set_param_value(uint8_t id, int32_t value)
         mix = value;
         mix_dirty = true;
             {% elif mix['range_f'] is defined %}
-            mix = ({{mix['max_f'] - mix['min_f']}}) / ({{mix['max'] - mix['min']}}) * (value - ({{mix['min']}})) + ({{mix['min_f']}});
+        mix = ({{mix['max_f'] - mix['min_f']}}) / ({{mix['max'] - mix['min']}}) * (value - ({{mix['min']}})) + ({{mix['min_f']}});
         mix_dirty = true;
             {% endif %}
         {% endif %}

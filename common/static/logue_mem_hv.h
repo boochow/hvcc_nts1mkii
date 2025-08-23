@@ -8,13 +8,17 @@ extern "C" {
 #endif
 
 #undef hv_malloc
-#define hv_malloc(_n)  logue_malloc(_n)
-
 #undef hv_realloc
-#define hv_realloc(a, b) logue_malloc(b)
-
 #undef hv_free
+#ifdef DEBUG
+#define hv_malloc(_n)  logue_malloc(_n, __func__)
+#define hv_realloc(a, b) logue_realloc(a, b, __func__)
+#define hv_free(x)  logue_free(x, __func__)
+#else
+#define hv_malloc(_n)  logue_malloc(_n)
+#define hv_realloc(a, b) logue_realloc(a, b)
 #define hv_free(x)  logue_free(x)
+#endif
 
 #ifdef __cplusplus
 }

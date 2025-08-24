@@ -1,6 +1,6 @@
-# hvcc External Generator for logue SDK V1
+# hvcc External Generator for NTS-1 mkII
 
-This project is an external generator for [hvcc](https://github.com/Wasted-Audio/hvcc). It generates code and other necessary files for the KORG [logue SDK](https://github.com/korginc/logue-sdk) for NTS-1 mkII from a Pure Data patch. Currently, only the oscillator unit is supported.
+This project is an external generator for [hvcc](https://github.com/Wasted-Audio/hvcc). It generates code and other necessary files for the KORG [logue SDK](https://github.com/korginc/logue-sdk) for NTS-1 mkII from a Pure Data patch. 
 
 ## Installation
 
@@ -13,13 +13,13 @@ Clone this repository. In addition, ensure that both hvcc and the logue SDK are 
    ```bash
    export PYTHONPATH=$PYTHONPATH:path-to-hvcc_nts1mkii
    ```
- 
+
    Then, run:
 
    ```bash
    hvcc YOUR_PUREDATA_PATCH.pd -G nts1mkii -n PATCH_NAME -o DESTINATION_DIR
    ```
- 
+
    Check the directory `DESTINATION_DIR`; it should contain four directories named `c`, `hv`, `ir`, and `logue_unit`.
 
 2. Move the directory named `logue_unit` into the logue SDK platform directories (e.g., `logue-sdk/platform/nts-1_mkii`).
@@ -29,53 +29,58 @@ Clone this repository. In addition, ensure that both hvcc and the logue SDK are 
    ```bash
    make install
    ```
- 
+
    Alternatively, you can specify your platform via a compile-time option without moving your project directory under `logue-sdk/platform`:
 
    ```bash
    make PLATFORMDIR="~/logue-sdk/platform/nutekt-digital" install
    ```
 
-**Notes about your Pure Data patch:**
-
-- The `[dac~]` object in your Pure Data patch must be single-channel (i.e., `[dac~ 1]`).
-- The `[adc~]` object does not receive sound.
-- For a list of objects supported by hvcc, refer [here](https://github.com/Wasted-Audio/hvcc/blob/develop/docs/09.supported_vanilla_objects.md).
-
 ## Examples
 
 A separate repository containing sample patches for this project is available at:
 
-[https://github.com/boochow/loguesdk_hvcc_examples](https://github.com/boochow/loguesdk_hvcc_examples)
+[https://github.com/boochow/nts1mkii_hvcc_examples](https://github.com/boochow/nts1mkii_hvcc_examples)
 
 ## Receiving Parameters in Your Pure Data Patch
 
-### Knobs
+### OSC Unit
 
-- The `[r shape @hv_param]` object receives the shape knob value as an integer (0 to 1023). Alternatively, `[r shape_f @hv_param]` receives a floating-point value between 0.0 and 1.0.
-- The `[r alt @hv_param]` object receives the shift-shape knob value as an integer (0 to 1023). Alternatively, `[r alt_f @hv_param]` receives a floating-point value between 0.0 and 1.0.
+#### Knobs
 
-### Pitch and LFO
+- The `[r shape @hv_param]` object receives the knob A value as an integer (0 to 1023). Alternatively, `[r shape_f @hv_param]` receives a floating-point value between 0.0 and 1.0.
+- The `[r alt @hv_param]` object receives the knob B value as an integer (0 to 1023). Alternatively, `[r alt_f @hv_param]` receives a floating-point value between 0.0 and 1.0.
+
+#### Pitch and LFO
 
 - The `[r pitch @hv_param]` object receives the oscillator pitch frequency in Hz. Alternatively, `[r pitch_note @hv_param]` receives the oscillator pitch as a floating-point note number.
 - The `[r slfo @hv_param]` object receives the shape LFO value, which ranges from -1.0 to 1.0 (note that the NTS-1’s LFO generates values between 0.0 and 1.0). Remember that the shape LFO is a control value, not a signal value.
 
-### Note Events
+#### Note Events
 
 - The `[r noteon_trig @hv_param]` object receives a `bang` when a MIDI Note On event occurs.
 - The `[r noteoff_trig @hv_param]` object receives a `bang` when a MIDI Note Off event occurs.
 
-### Parameters
+### ModFx / DelFx / RevFx Unit
 
-Any `[r]` object whose variable name does not match those described above but includes the `@hv_param` parameter is recognized as an oscillator parameter. Up to eight oscillator parameters can be used.
+#### Knobs
+
+- The `[r time @hv_param]` object receives the knob A value as an integer (0 to 1023). Alternatively, `[r time_f @hv_param]` receives a floating-point value between 0.0 and 1.0.
+- The `[r depth @hv_param]` object receives the knob B value as an integer (0 to 1023). Alternatively, `[r depth_f @hv_param]` receives a floating-point value between 0.0 and 1.0.
+
+- [DelFX/RevFX only] The `[r mix @hv_param]` object receives the mix knob (delay/reverb + knob B) value as an integer (-1000 to 1000). Alternatively, `[r mix_f @hv_param]` receives a floating-point value between -1.0 and 1.0. The logue SDK assumes that -1000 and -1.0 represent 100% dry sound, zero represents 50% dry/50% wet sound, 1000 and 1.0 represent 100% wet sound.
+
+### Parameters (available for all types of units)
+
+Any `[r]` object whose variable name does not match those described above but includes the `@hv_param` parameter is recognized as a parameter. Up to eight  parameters can be used for oscillator units and modFx units, seven for delFx and revFx units.
 
 #### Specifying Parameter Slot Number
 
-Optionally, you can specify the parameter slot by adding a prefix `_N_` (where N is a number from 1 to 6) to the variable name. The remainder of the name is used as the variable name on the synthesizer’s display. For example, the variable name `_3_ratio` assigns the parameter "ratio" to slot 3.
+Optionally, you can specify the parameter slot by adding a prefix `_N_` (where N is a number from 1 to 8) to the variable name. The remainder of the name is used as the variable name on the synthesizer’s display. For example, the variable name `_3_ratio` assigns the parameter "ratio" to slot 3.
 
 #### Receiving Floating-Point Values
 
-By default, all variables receive raw integer values from the logue SDK API. You can specify a minimum value (between -100 and 100) and a maximum value (between 0 and 100).
+By default, all variables receive raw integer values from the logue SDK API. You can specify a minimum value, a maximum value, and a default value.
 
 A variable with the postfix `_f` receives a floating-point value between 0.0 and 1.0 (mapped from integer values between 0 and 100). You can optionally specify the minimum, maximum, and default values using the syntax:
 

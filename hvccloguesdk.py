@@ -114,7 +114,7 @@ class LogueSDKV2Generator(Generator, ABC):
             if num_input_channels > cls.UNIT_NUM_INPUT:
                 print(f"Warning: {num_input_channels} input channels(ignored)")
             if num_output_channels != cls.UNIT_NUM_OUTPUT:
-                raise Exception(f"{cls.unit_type().upper()} units support only stereo output.")
+                raise Exception(f"{cls.unit_type().upper()} units support only {cls.UNIT_NUM_OUTPUT}ch output.")
 
             # ensure that the output directory does not exist
             out_dir = os.path.abspath(out_dir)

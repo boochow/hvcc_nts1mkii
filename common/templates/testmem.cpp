@@ -20,13 +20,13 @@ int main(int argc, char* argv[]) {
 
     for(int i = 0; i < 135000; i++) { // 135000 = 48000 * 60sec * 3min / 64
         {% if unit_type in ["osc"] %}
-        {% if slfo is defined %}
-        hv_sendFloatToReceiver(hvContext, HV_{{patch_name|upper}}_PARAM_IN_SLFO, 0);
-        {% endif %}
         {% if pitch is defined %} 
         hv_sendFloatToReceiver(hvContext, HV_{{patch_name|upper}}_PARAM_IN_PITCH, 440.f);
         {% elif pitch_note is defined %}
         hv_sendFloatToReceiver(hvContext, HV_{{patch_name|upper}}_PARAM_IN_PITCH_NOTE, 60);
+        {% endif %}
+        {% if slfo is defined %}
+        hv_sendFloatToReceiver(hvContext, HV_{{patch_name|upper}}_PARAM_IN_SLFO, 0);
         {% endif %}
         {% if shape is defined %}
         {% if shape['range'] is defined %}
@@ -74,6 +74,18 @@ int main(int argc, char* argv[]) {
         hv_sendFloatToReceiver(hvContext, HV_{{patch_name|upper}}_PARAM_IN_{{param[id]['name']|upper}}, {{param[id]['default']}});
         {% endif %}
         {% endfor %}
+        {% if unit_type in ["osc"] %}
+        {% if noteon_trig is defined %}
+        if (i % 750 == 0) {
+            hv_sendBangToReceiver(hvContext, HV_{{patch_name|upper}}_PARAM_IN_NOTEON_TRIG);
+        }
+        {% endif %}
+        {% if noteoff_trig is defined %}
+        if (i % 750 == 250) {
+            hv_sendBangToReceiver(hvContext, HV_{{patch_name|upper}}_PARAM_IN_NOTEOFF_TRIG);
+        }
+        {% endif %}
+        {% endif %}
         hv_processInline(hvContext, in_buffer, out_buffer, 64);
     }
     printf("total: %ld\n", heap_offset);

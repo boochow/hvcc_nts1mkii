@@ -300,7 +300,7 @@ __unit_callback void unit_render(const float * in, float * out, uint32_t frames)
         {% endif %}
     {% endif %}
     {% endif %}
-    {% for i in range(1, 8) %}
+    {% for i in range(1, 11 - num_fixed_param) %}
     {% set id = "param_id" ~ i %}
     {% if param[id] is defined %}
     if (param_dirty[{{i - 1}}]) {

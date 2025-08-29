@@ -99,7 +99,7 @@ static bool depth_dirty;
 {% if mix['range'] is defined %}
 static int32_t mix;
 static bool mix_dirty;
-{% elif depth['range_f'] is defined %}
+{% elif mix['range_f'] is defined %}
 static float mix;
 static bool mix_dirty;
 {% endif %}

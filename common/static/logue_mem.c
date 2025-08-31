@@ -12,7 +12,7 @@ static unsigned char heap[UNIT_HEAP_SIZE];
 // sdram will be allocated in init_sdram()
 static unsigned char *sdram = NULL;
 
-#ifdef DEBUG
+#ifdef TESTMEM
 #include <stdio.h>
 #define DLOG(...) printf(__VA_ARGS__)
 // make these variables visible from testmem.c
@@ -32,27 +32,27 @@ void init_sdram(unsigned char* (*func)(unsigned int)) {
         sdram_offset = UNIT_SDRAM_SIZE;
 }
 
-#ifdef DEBUG
+#ifdef TESTMEM
 void *logue_malloc(size_t size, const char *caller) {
 #else
 void* logue_malloc(size_t size) {
 #endif
     void *ptr = NULL;
 #if SDRAM_ALLOC_THRESHOLD > 0
-#ifdef DEBUG
+#ifdef TESTMEM
     ptr = logue_sdram_alloc(size, __func__);
 #else
     ptr = logue_sdram_alloc(size);
 #endif
 #endif
     if (ptr == NULL) {
-#ifdef DEBUG
+#ifdef TESTMEM
         ptr = logue_sram_alloc(size, __func__);
 #else
         ptr = logue_sram_alloc(size);
 #endif
     }
-#ifdef DEBUG
+#ifdef TESTMEM
     if (ptr == NULL) {
         DLOG("malloc: %ld : NG (%s)\n", size, caller);
     } else {
@@ -62,7 +62,7 @@ void* logue_malloc(size_t size) {
     return ptr;
 }
 
-#ifdef DEBUG
+#ifdef TESTMEM
 void *logue_sram_alloc(size_t size, const char *caller) {
 #else
 void* logue_sram_alloc(size_t size) {
@@ -77,7 +77,7 @@ void* logue_sram_alloc(size_t size) {
     return ptr;
 }
 
-#ifdef DEBUG
+#ifdef TESTMEM
 void *logue_sdram_alloc(size_t size, const char *caller) {
 #else
 void* logue_sdram_alloc(size_t size) {
@@ -96,12 +96,12 @@ void* logue_sdram_alloc(size_t size) {
     }
 }
 
-#ifdef DEBUG
+#ifdef TESTMEM
 void *logue_realloc(void *ptr, size_t size, const char *caller) {
 #else
 void *logue_realloc(void *ptr, size_t size) {
 #endif
-#ifdef DEBUG
+#ifdef TESTMEM
     logue_free(ptr, __func__);
     ptr = logue_malloc(size, __func__);
 #else
@@ -114,7 +114,7 @@ void *logue_realloc(void *ptr, size_t size) {
     return ptr;
 }
 
-#ifdef DEBUG
+#ifdef TESTMEM
 void logue_free(void *ptr, const char *caller) {
     (void) ptr;
     (void) caller;

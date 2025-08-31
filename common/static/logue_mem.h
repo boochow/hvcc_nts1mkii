@@ -11,7 +11,7 @@ extern "C" {
 #define SDRAM_ALLOC_THRESHOLD 256
 #endif
 
-#ifdef DEBUG
+#ifdef TESTMEM
 extern void init_sdram(unsigned char* (*func)(unsigned int));
 extern void *logue_malloc(size_t size, const char *caller);
 extern void *logue_sram_alloc(size_t size, const char *caller);

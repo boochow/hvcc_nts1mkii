@@ -6,7 +6,7 @@ extern "C" {
 #endif
 
 #undef hv_malloc
-#ifdef DEBUG
+#ifdef TESTMEM
 #define hv_malloc(_n)  logue_sram_alloc(_n, __func__)
 #else
 #define hv_malloc(_n)  logue_sram_alloc(_n)

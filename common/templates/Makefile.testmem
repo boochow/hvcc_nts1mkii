@@ -11,7 +11,7 @@ COBJS = $(notdir $(CSRC:.c=.o))
 CXXOBJS = $(notdir $(CXXSRC:.cpp=.o))
 vpath %.c $(sort $(dir $(CSRC)))
 vpath %.cpp $(sort $(dir $(CXXSRC)))
-CFLAGS = -g -DDEBUG -DUNIT_HEAP_SIZE=$(UNIT_HEAP_SIZE) -D__LOGUE_MATH_HV__
+CFLAGS = -g -DTESTMEM -DUNIT_HEAP_SIZE=$(UNIT_HEAP_SIZE) -D__LOGUE_MATH_HV__
 CFLAGS += -DSDRAM_ALLOC_THRESHOLD=$(SDRAM_ALLOC_THRESHOLD)
 CXXFLAGS = $(CFLAGS)
 

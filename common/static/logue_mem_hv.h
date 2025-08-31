@@ -10,7 +10,7 @@ extern "C" {
 #undef hv_malloc
 #undef hv_realloc
 #undef hv_free
-#ifdef DEBUG
+#ifdef TESTMEM
 #define hv_malloc(_n)  logue_malloc(_n, __func__)
 #define hv_realloc(a, b) logue_realloc(a, b, __func__)
 #define hv_free(x)  logue_free(x, __func__)

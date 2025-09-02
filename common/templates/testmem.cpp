@@ -18,7 +18,7 @@ int main(int argc, char* argv[]) {
 
     hvContext = hv_{{patch_name}}_new_with_options(48000, {{msg_pool_size_kb}}, {{input_queue_size_kb}}, {{output_queue_size_kb}});
 
-    for(int i = 0; i < 135000; i++) { // 135000 = 48000 * 60sec * 3min / 64
+    for(int i = 0; i < 15000; i++) { // 45000 = 48000 * 20sec / 64
         {% if unit_type in ["osc"] %}
         {% if pitch is defined %} 
         hv_sendFloatToReceiver(hvContext, HV_{{patch_name|upper}}_PARAM_IN_PITCH, 440.f);

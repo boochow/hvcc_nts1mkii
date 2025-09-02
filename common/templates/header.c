@@ -7,12 +7,20 @@
 
 #include "unit_{{unit_type}}.h"
 
+#ifndef PROJECT_DEV_ID
+ #define PROJECT_DEV_ID=(0x0U)
+#endif
+
+#ifndef PROJECT_UNIT_ID
+ #define PROJECT_UNIT_ID=(0x0U)
+#endif
+
 const __unit_header unit_header_t unit_header = {
     .header_size = sizeof(unit_header_t),
     .target = UNIT_TARGET_PLATFORM | k_unit_module_{{unit_type}},
     .api = UNIT_API_VERSION,
-    .dev_id = 0x0U,
-    .unit_id = 0x0U,
+    .dev_id = PROJECT_DEV_ID,
+    .unit_id = PROJECT_UNIT_ID,
     .version = 0x00010000U,
     .name = "{{patch_name}}",
     .num_params = {{num_fixed_param + num_param}},

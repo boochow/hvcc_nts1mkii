@@ -6,6 +6,8 @@
 
 PROJECT := {{patch_name}}
 PROJECT_TYPE := {{unit_type}}
+PROJECT_DEV_ID := 0x0U
+PROJECT_UNIT_ID := 0x0U
 MAX_UNIT_SIZE := {{max_unit_size}}
 SDRAM_ALLOC_THRESHOLD := {{sdram_alloc_threshold}}
 
@@ -86,6 +88,8 @@ ULIBS  += -Wl,--gc-sections
 #
 
 UDEFS = -DNDEBUG -DUNIT_HEAP_SIZE=$(HEAP_SIZE) -fvisibility=hidden
+
+UDEFS += -DPROJECT_DEV_ID=$(PROJECT_DEV_ID) -DPROJECT_UNIT_ID=$(PROJECT_UNIT_ID)
 
 ifdef SDRAM_SIZE
 UDEFS += -DUNIT_SDRAM_SIZE=$(SDRAM_SIZE) -DSDRAM_ALLOC_THRESHOLD=$(SDRAM_ALLOC_THRESHOLD)

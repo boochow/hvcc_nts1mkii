@@ -1,10 +1,10 @@
 # hvcc External Generator for NTS-1 mkII
 
-This project is an external generator for [hvcc](https://github.com/Wasted-Audio/hvcc). It generates code and other necessary files for the KORG [logue SDK](https://github.com/korginc/logue-sdk) for NTS-1 mkII from a Pure Data patch. 
+This project is an external generator for [hvcc](https://github.com/Wasted-Audio/hvcc). It generates code and other necessary files for the KORG [logue SDK for NTS-1 mkII](https://github.com/korginc/logue-sdk/tree/main/platform/nts-1_mkii) from a Pure Data patch. A patch can be converted to an oscillator unit, a modulation effect unit, a delay effect unit, or a reverb effect unit.
 
 ## Installation
 
-Clone this repository. In addition, ensure that both hvcc and the logue SDK are installed. You also need GCC/G++ to estimate the required heap memory size; see the Appendix for details.
+Clone this repository. In addition, ensure that both hvcc and the logue SDK are installed. You also need GCC/G++ for your development environment to estimate the required heap memory size; see the Appendix for details.
 
 ## Usage
 
@@ -14,23 +14,25 @@ Clone this repository. In addition, ensure that both hvcc and the logue SDK are 
    export PYTHONPATH=$PYTHONPATH:path-to-hvcc_nts1mkii
    ```
 
-   Then, run:
+1. To convert your patch, decide the type of unit and run:
 
    ```bash
-   hvcc YOUR_PUREDATA_PATCH.pd -G nts1mkii -n PATCH_NAME -o DESTINATION_DIR
+   hvcc YOUR_PUREDATA_PATCH.pd -G nts1mkii_{type} -n PATCH_NAME -o DESTINATION_DIR
    ```
+
+   where `{type}` is one of `osc`, `modfx`, `delfx`, or`revfx`. 
 
    Check the directory `DESTINATION_DIR`; it should contain four directories named `c`, `hv`, `ir`, and `logue_unit`.
 
-2. Move the directory named `logue_unit` into the logue SDK platform directories (e.g., `logue-sdk/platform/nts-1_mkii`).
+1. Move the directory named `logue_unit` under the logue SDK platform directory `logue-sdk/platform/nts-1_mkii`.
 
-3. In the `logue_unit` directory, run:
+1. In the `logue_unit` directory, run:
 
    ```bash
    make install
    ```
 
-   Alternatively, you can specify your platform via a compile-time option without moving your project directory under `logue-sdk/platform`:
+   Alternatively, you can specify your platform directory path via a compile-time option:
 
    ```bash
    make PLATFORMDIR="~/logue-sdk/platform/nutekt-digital" install
@@ -41,6 +43,8 @@ Clone this repository. In addition, ensure that both hvcc and the logue SDK are 
 A separate repository containing sample patches for this project is available at:
 
 [https://github.com/boochow/nts1mkii_hvcc_examples](https://github.com/boochow/nts1mkii_hvcc_examples)
+
+All examples for [logue SDK v1](https://github.com/boochow/loguesdk_hvcc_examples) are also compatible with this project.
 
 ## Receiving Parameters in Your Pure Data Patch
 
@@ -54,7 +58,7 @@ A separate repository containing sample patches for this project is available at
 #### Pitch and LFO
 
 - The `[r pitch @hv_param]` object receives the oscillator pitch frequency in Hz. Alternatively, `[r pitch_note @hv_param]` receives the oscillator pitch as a floating-point note number.
-- The `[r slfo @hv_param]` object receives the shape LFO value, which ranges from -1.0 to 1.0 (note that the NTS-1’s LFO generates values between 0.0 and 1.0). Remember that the shape LFO is a control value, not a signal value.
+- The `[r slfo @hv_param]` object receives the shape LFO value, which ranges from 0.0 to 1.0. Remember that the shape LFO is a control value, not a signal value.
 
 #### Note Events
 
@@ -68,7 +72,7 @@ A separate repository containing sample patches for this project is available at
 - The `[r time @hv_param]` object receives the knob A value as an integer (0 to 1023). Alternatively, `[r time_f @hv_param]` receives a floating-point value between 0.0 and 1.0.
 - The `[r depth @hv_param]` object receives the knob B value as an integer (0 to 1023). Alternatively, `[r depth_f @hv_param]` receives a floating-point value between 0.0 and 1.0.
 
-- [DelFX/RevFX only] The `[r mix @hv_param]` object receives the mix knob (delay/reverb + knob B) value as an integer (-1000 to 1000). Alternatively, `[r mix_f @hv_param]` receives a floating-point value between -1.0 and 1.0. The logue SDK assumes that -1000 and -1.0 represent 100% dry sound, zero represents 50% dry/50% wet sound, 1000 and 1.0 represent 100% wet sound.
+- With DelFX and RevFX units, the `[r mix @hv_param]` object receives the mix knob (DELAY or REVERB button + knob B) value as an integer (-1000 to 1000). Alternatively, `[r mix_f @hv_param]` receives a floating-point value between -1.0 and 1.0. Logue SDK assumes that -1000 and -1.0 represent 100% dry sound, zero represents 50% dry/50% wet sound, 1000 and 1.0 represent 100% wet sound.
 
 ### Parameters (available for all types of units)
 
@@ -80,33 +84,35 @@ Optionally, you can specify the parameter slot by adding a prefix `_N_` (where N
 
 #### Receiving Floating-Point Values
 
-By default, all variables receive raw integer values from the logue SDK API. You can specify a minimum value, a maximum value, and a default value.
+By default, all variables receive raw integer values from the logue SDK API. You can specify a minimum value, a maximum value, and a default value like this:
+`[r varname @hv_param 1 5 3]`
 
-A variable with the postfix `_f` receives a floating-point value between 0.0 and 1.0 (mapped from integer values between 0 and 100). You can optionally specify the minimum, maximum, and default values using the syntax:
+When the minimum, maximum, and default values are omitted, they are assumed to be `[0 1 0]`. The default value must be specified when the minimum and the maximum values are specified. 
+
+A variable with the postfix `_f` receives a floating-point value between 0.0 and 1.0 (mapped from integer values between 0 and 1023). You can optionally specify the minimum, maximum, and default values using the syntax:
 
 ```
 [r varname @hv_param min max default]
 ```
 
-In this case, the floating-point values are mapped from integer values between -100 and 100.
-
 #### Parameter Type
 
-Currently, all parameters are defined as "percentage type" because typeless parameters cannot have negative values, and the values shown on the display differ between the NTS-1 and Prologue/Minilogue XD.
+`mix` and `mix_f` are always considered as a `k_unit_param_type_drywet` type parameter. All other parameters are defined as floating-point type or integer type according to whether their name ends with `_f` or not. 
 
 ## Restrictions
 
-### Supported Unit Type
+### DAC and ADC
 
-Only oscillator-type units are supported. Other logue SDK user unit types (such as mod, delay, or reverb) are not supported because they do not have enough memory space to run an hvcc context.
+The logue SDK oscillator units support only a 48,000 Hz sampling rate. The number of channels of `[dac~]` object must be 1 for oscillator units, 2 for other type of units. The number of channels of `[adc~]` must be 2 for all types of units.
 
 ### Memory Footprint
 
-The oscillator unit must fit within a 32,767-byte space. All necessary resources—including code, constants, variables, and both heap and stack—must reside within this space. A linker error will occur if the binary size exceeds this boundary.
+A unit must fit within the [Max RAM load size](https://github.com/korginc/logue-sdk/blob/main/platform/nts-1_mkii/README.md#supported-modules). While no error will occur in the build process when the binary file might exceed this limit, a warning message below will appear after build process:
 
-### DAC
-
-The logue SDK oscillator units support only a single-channel DAC with a 48,000 Hz sampling rate.
+``` Memory footprint: 29796 bytes
+ Memory footprint: 29796 bytes
+ WARNING: Memory footprint exceeds 24576
+```
 
 ### `msg_toString()` does not work
 
@@ -116,21 +122,21 @@ To reduce the memory footprint, `hv_snprintf()` is replaced by an empty function
 
 ### Size of the Heap Memory
 
-Due to the 32KB memory space limitation, you must specify the heap size of an oscillator unit before the build process. The heap size can be set as a compiler flag:
+Due to ensure that your unit will fit within the memory space limitation, you must specify the heap size of your unit before the build process. The heap size can be set as a compiler flag:
 
 ```makefile
 -DUNIT_HEAP_SIZE=3072
 ```
 
-The heap size estimation process is integrated into `project.mk`, or you can manually specify the size like this:
+The heap size estimation process is integrated into `config.mk`, or you can manually specify the size like this:
 
 ```bash
 make HEAP_SIZE=4096
 ```
 
-For automatic estimation, this external generator creates `testmem.c` and `Makefile.testmem`. When GCC and G++ are available, `testmem.c` is built and executed from `project.mk`, and the estimated heap size is saved in `logue_heap_size.mk`.
+For automatic estimation, this external generator creates `testmem.c` and `Makefile.testmem`. When GCC and G++ are available, `testmem.c` is built and executed from `config.mk`, and the estimated heap size is saved in `logue_heap_size.mk`.
 
-You can check the `malloc()` calls and the total requested memory for generating the first 6400 samples by running:
+You can check the `malloc()` calls and the total requested memory for generating the first 960,000 samples by running:
 
 ```bash
 make -f Makefile.testmem
@@ -139,9 +145,15 @@ make -f Makefile.testmem
 
 If GCC and G++ are not available in your development environment, the default heap size (3072 bytes) is used. (Note: In the Docker image version of the logue SDK build environment, GCC/G++ are not provided, so the default heap size is always used.)
 
+### Size of the SDRAM allocation
+
+The modfx, delfx, and revfx units can allocate SDRAM blocks to store large data such as delay line.  The source code generated by this external generator allocates SDRAM block when the requested block size is larger than 256 bytes.
+
+Since logue SDK requires units to allocate SDRAM blocks in their initialization process, you must specify the total SDRAM size of your unit before the build process. The size for your unit is estimated within the same process as heap memory size estimation, so usually you do not need to estimate it by yourself. 
+
 ### Math Functions Approximation
 
-Some math functions have been replaced with logue SDK functions that provide approximate values. If you get inaccurate results, comment out the following line in `project.mk`:
+Some math functions have been replaced with logue SDK functions that provide approximate values. If you get inaccurate results, comment out the following line in `config.mk`:
 
 ```makefile
 UDEFS += -DLOGUE_FAST_MATH
@@ -165,7 +177,7 @@ Any table whose name ends with `_r` that is exposed using the `@hv_table` notati
 
 However, note that:
 
-1. Filling the buffer with `osc_white()` requires significant processing time, so keep the table size as small as possible (typically 16 or 32 samples).
+1. Filling the buffer with `osc_white()` requires significant processing time, so keep the table size as small as possible (typically 64 samples).
 2. To generate white noise, you also need a `[phasor~ freq]`, `[*~ tablesize]`, and `[tabread~]` object. The value of `freq` should be `48000 / tablesize`.
 
 ## Credits

@@ -78,7 +78,7 @@ const __unit_header unit_header_t unit_header = {
         {% set id = "param_id" ~ i %}
         {% if param[id] is defined %}
         {% if param[id]['range_f'] is defined %}
-        {{'{' ~ (param[id]['min'] * 10) | int}}, {{(param[id]['max'] * 10) | int}}, {{(param[id]['default'] * 10) | int}}, {{(param[id]['default'] * 10) | int}}, k_unit_param_type_none, 1, 1, 0, {{ '{"' ~ param[id]['display'] ~ '"}}' }}{% if not loop.last %},{{"\n"}}{% endif %}
+        {{'{' ~ (param[id]['min'] * (10 ** param[id]['frac'])) | int}}, {{(param[id]['max'] * (10 ** param[id]['frac'])) | int}}, {{(param[id]['default'] * (10 ** param[id]['frac'])) | int}}, {{(param[id]['default'] * (10 ** param[id]['frac'])) | int}}, k_unit_param_type_none, {{[param[id]['frac'], 0] | max}}, 1, 0, {{ '{"' ~ param[id]['display'] ~ '"}}' }}{% if not loop.last %},{{"\n"}}{% endif %}
         {% else %}
         {{'{' ~ param[id]['min'] | int}}, {{param[id]['max'] | int}}, {{param[id]['default'] | int}}, {{param[id]['default'] | int}}, k_unit_param_type_none, 0, 0, 0, {{ '{"' ~ param[id]['display'] ~ '"}}' }}{% if not loop.last %},{{"\n"}}{% endif %}
         {% endif %}

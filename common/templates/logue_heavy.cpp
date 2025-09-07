@@ -433,7 +433,7 @@ __unit_callback void unit_set_param_value(uint8_t id, int32_t value)
         {{param[id]['name']}} = value;
         param_dirty[{{i - 1}}] = true;
         {% elif param[id]['range_f'] is defined %}
-        {{param[id]['name']}} = {{param[id]['range_f']}} * 0.1 * value / ({{param[id]['max'] - param[id]['min']}}) + ({{param[id]['min_f']}});
+        {{param[id]['name']}} = {{param[id]['range_f']}} * {{ 10 ** (-param[id]['frac']) }} * value / ({{param[id]['max'] - param[id]['min']}}) + ({{param[id]['min_f']}});
         param_dirty[{{i - 1}}] = true;
         {% endif %}
         break;

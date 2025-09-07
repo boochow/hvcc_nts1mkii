@@ -4,6 +4,7 @@ import time
 import jinja2
 import re
 import json
+import math
 from abc import ABC, abstractmethod
 
 from typing import Dict, Optional, Tuple
@@ -11,6 +12,11 @@ from typing import Dict, Optional, Tuple
 from hvcc.types.compiler import CompilerResp, ExternInfo, Generator, CompilerNotif, CompilerMsg
 from hvcc.interpreters.pd2hv.NotificationEnum import NotificationEnum
 from hvcc.types.meta import Meta
+
+def scale(n):
+    if n == 0:
+        return 3
+    return 3 - int(math.log10(abs(n)))
 
 def set_min_value(dic, key, value):
     if key not in dic:
@@ -253,18 +259,10 @@ class LogueSDKV2Generator(Generator, ABC):
                     p_range = p_max - p_min
                     p_param_max = p_max
                     p_param_min = p_min
-                    '''
-                    if p_min < 0:
-                        p_param_max = 1000
-                        p_param_min = -1000
-                    else:
-                        p_param_max = 1023
-                        p_param_min = 0
-                    '''
-
                     if set_min_value(context['param'][p_key], 'range_f', p_range):
                         context['param'][p_key]['max_f'] = p_max
                         context['param'][p_key]['min_f'] = p_min
+                        context['param'][p_key]['frac'] = min(scale(p_max), scale(p_min))
                         context['param'][p_key]['max'] = p_param_max
                         context['param'][p_key]['min'] = p_param_min
                 else:

@@ -35,7 +35,7 @@ Clone this repository, and ensure that both hvcc and the logue SDK are installed
    Alternatively, you can specify your platform directory path via a compile-time option:
 
    ```bash
-   make PLATFORMDIR="~/logue-sdk/platform/nutekt-digital" install
+   make PLATFORMDIR="~/logue-sdk/platform/nts-1_mkii" install
    ```
 
 ## Examples
